@@ -1,2 +1,2 @@
 # embers
-Framework designed for embedded software development, aiming to be MISRA C compliant.
+Framework designed for embedded software development on critical systems.
