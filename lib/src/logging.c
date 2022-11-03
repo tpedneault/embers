@@ -1,4 +1,5 @@
 #include "logging.h"
+#include <stdio.h>
 
 static const char *logSeverityString[6] = {"TRACE", "DEBUG", "INFO",
                                            "WARN",  "ERROR", "FATAL"};
@@ -21,6 +22,11 @@ void logMsg(const uint8_t severity, const char *file, int line, const char *fmt,
   const char *color = logSeverityColors[severity];
   const char *severityStr = logSeverityString[severity];
   struct tm *timestamp = _logGetTimestamp();
-  printf("%s%02d:%02d:%02d %-5s %s:%i: %s\x1b[0m\n", color, timestamp->tm_hour,
-         timestamp->tm_min, timestamp->tm_sec, severityStr, file, line, fmt);
+  printf("%s%02d:%02d:%02d %-5s %s:%i: \x1b[0m", color, timestamp->tm_hour,
+         timestamp->tm_min, timestamp->tm_sec, severityStr, file, line);
+  va_list args;
+  va_start(args, fmt);
+  vprintf(fmt, args);
+  va_end(args);
+  printf("\n");
 }

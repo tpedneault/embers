@@ -1,6 +1,6 @@
 #include "drivers/uart.h"
 
-#define UART_MAX_CALLBACKS 8
+#define UART_MAX_INSTANCES 8
 
 typedef struct {
   uint8_t instanceId;
@@ -10,13 +10,13 @@ typedef struct {
 
 static struct {
   int numCallbacks;
-  uartCallback callbacks[UART_MAX_CALLBACKS];
+  uartCallback callbacks[UART_MAX_INSTANCES];
 } UART;
 
 uint8_t uartInit(const uint8_t id, uartReadCb readCallback,
               uartWriteCb writeCallback) {
-  if (UART.numCallbacks >= UART_MAX_CALLBACKS - 1) {
-    logError("Failed to register UART instance id=%d, maximum capacity reached (cannot exceed %d instances).", id, UART_MAX_CALLBACKS);
+  if (UART.numCallbacks >= UART_MAX_INSTANCES - 1) {
+    logError("Failed to register UART instance id=%d, maximum capacity reached (cannot exceed %d instances).", id, UART_MAX_INSTANCES);
     return -1;
   }
 
@@ -32,7 +32,7 @@ uint8_t uartInit(const uint8_t id, uartReadCb readCallback,
 }
 
 uint8_t uartRead(const uint8_t id, char *buffer, int length) {
-  for (int i = 0; i < UART_MAX_CALLBACKS && UART.callbacks[i].read; i++) {
+  for (int i = 0; i < UART_MAX_INSTANCES && UART.callbacks[i].read; i++) {
     if (UART.callbacks[i].instanceId == id) {
       UART.callbacks[i].read(buffer, length);
       return 0;
@@ -44,7 +44,7 @@ uint8_t uartRead(const uint8_t id, char *buffer, int length) {
 }
 
 uint8_t uartWrite(const uint8_t id, const char *buffer, int length) {
-  for (int i = 0; i < UART_MAX_CALLBACKS && UART.callbacks[i].write; i++) {
+  for (int i = 0; i < UART_MAX_INSTANCES && UART.callbacks[i].write; i++) {
     if (UART.callbacks[i].instanceId == id) {
       UART.callbacks[i].write(buffer, length);
       return 0;
@@ -53,9 +53,4 @@ uint8_t uartWrite(const uint8_t id, const char *buffer, int length) {
 
   logError("Failed to write to UART instance id=%d, callback is not available.", id);
   return -1;
-}
-
-void uartTest() {
-  int i = 2;
-  i *= 2;  
 }
