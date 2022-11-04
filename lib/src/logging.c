@@ -2,8 +2,6 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-#define LOGGING_MAX_CALLBACKS 32
-
 static const char *logSeverityString[6] = {"TRACE", "DEBUG", "INFO",
                                            "WARN",  "ERROR", "FATAL"};
 
@@ -12,12 +10,12 @@ static const char *logSeverityColors[6] = {"\x1b[90m", "\x1b[32m", "",
 
 typedef struct {
   loggingFn fn;
-  void* data;
-} loggingCallback; 
+  void *data;
+} loggingCallback;
 
 static struct {
   uint8_t numCallbacks;
-  loggingCallback callbacks[LOGGING_MAX_CALLBACKS];
+  loggingCallback callbacks[EMBERS_LOG_MAX_CALLBACKS];
 } LOGGING;
 
 struct tm *_logGetTimestamp() {
@@ -31,7 +29,9 @@ struct tm *_logGetTimestamp() {
   return timeInfo;
 }
 
-void _logDefaultCallback(const uint8_t severity, const char *file, int line, const char *fmt, va_list args) {
+#if EMBERS_LOG_DEFAULT_CB == ENABLED
+void _logDefaultCallback(const uint8_t severity, const char *file, int line,
+                         const char *fmt, va_list args) {
   const char *color = logSeverityColors[severity];
   const char *severityStr = logSeverityString[severity];
   struct tm *timestamp = _logGetTimestamp();
@@ -40,9 +40,12 @@ void _logDefaultCallback(const uint8_t severity, const char *file, int line, con
   vprintf(fmt, args);
   printf("\n");
 }
+#endif
 
 void logInit() {
-  logRegisterCb(_logDefaultCallback); 
+#if EMBERS_LOG_DEFAULT_CB == ENABLED
+  logRegisterCb(_logDefaultCallback);
+#endif
 }
 
 void logRegisterCb(loggingFn callback) {

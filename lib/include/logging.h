@@ -1,6 +1,8 @@
 #ifndef _LOGGING_H
 #define _LOGGING_H
 
+#include "config/config.h"
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
