@@ -5,7 +5,7 @@
 static const char *logSeverityString[6] = {"TRACE", "DEBUG", "INFO",
                                            "WARN",  "ERROR", "FATAL"};
 
-static const char *logSeverityColors[6] = {"\x1b[90m", "\x1b[32m", "",
+static const char *logSeverityColors[6] = {"\x1b[90m", "\x1b[32m", "\x1b[0m",
                                            "\x1b[33m", "\x1b[31m", "\x1b[35m"};
 
 typedef struct {
@@ -35,8 +35,8 @@ void _logDefaultCallback(const uint8_t severity, const char *file, int line,
   const char *color = logSeverityColors[severity];
   const char *severityStr = logSeverityString[severity];
   struct tm *timestamp = _logGetTimestamp();
-  printf("%s%02d:%02d:%02d %-5s %s:%i: \x1b[0m", color, timestamp->tm_hour,
-         timestamp->tm_min, timestamp->tm_sec, severityStr, file, line);
+  printf("\x1b[90m%02d:%02d:%02d %s%-5s \x1b[90m%s:%i:\x1b[0m \x1b[0m", timestamp->tm_hour,
+         timestamp->tm_min, timestamp->tm_sec, color, severityStr, file, line);
   vprintf(fmt, args);
   printf("\n");
 }

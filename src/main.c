@@ -1,5 +1,4 @@
 #include "embers.h"
-#include "logging.h"
 
 void exampleLogCallback(const uint8_t severity, const char* file, int line, const char* fmt, va_list args) {
   vprintf(fmt, args);
