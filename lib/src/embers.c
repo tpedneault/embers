@@ -1,4 +1,5 @@
 #include "embers.h"
+#include "logging.h"
 
 #define UART_MAX_INSTANCES 6
 
@@ -14,10 +15,9 @@ void _uartConsoleWriteCb(const char *buffer, int length) {
 #endif
 
 uint8_t embersInit() {
+  logInit();
 #ifdef ENABLE_UART_CONSOLE
   uartInit(UART_CONSOLE, (uartReadCb)_uartConsoleReadCb, (uartWriteCb)_uartConsoleWriteCb);
-  uartWrite(UART_CONSOLE, "Hello, world!", 13);
-  uartWrite(0x00, "Hello, world!", 13);
 #endif
   return 0;
 }

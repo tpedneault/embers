@@ -1,22 +1,32 @@
 #include "drivers/uart.h"
+#include "logging.h"
 
 #define UART_MAX_INSTANCES 8
 
 typedef struct {
   uint8_t instanceId;
   uartReadCb read;
+  void* readData;
   uartWriteCb write;
+  void* writeData;
 } uartCallback;
 
 static struct {
-  int numCallbacks;
+  uint8_t numCallbacks;
   uartCallback callbacks[UART_MAX_INSTANCES];
 } UART;
 
 uint8_t uartInit(const uint8_t id, uartReadCb readCallback,
-              uartWriteCb writeCallback) {
+                 uartWriteCb writeCallback) {
   if (UART.numCallbacks >= UART_MAX_INSTANCES - 1) {
-    logError("Failed to register UART instance id=%d, maximum capacity reached (cannot exceed %d instances).", id, UART_MAX_INSTANCES);
+    logError("Failed to register UART instance id=%d, maximum capacity reached "
+             "(cannot exceed %d instances).",
+             id, UART_MAX_INSTANCES);
+    return -1;
+  }
+
+  for (int i = 0; i < UART_MAX_INSTANCES && UART.callbacks[i].instanceId; i++) {
+    logError("Failed to register UART instance id=%d, id is already in use.", id);
     return -1;
   }
 

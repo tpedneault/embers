@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.6)
 project(embers-demo LANGUAGES C)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_C_CPPCHECK "cppcheck")
 
 include_directories(include)
 include_directories(lib/include)
